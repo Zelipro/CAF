@@ -1,0 +1,265 @@
+<Page5>:
+    name:"Page5"
+    MDNavigationLayout:
+    
+        ScreenManager:
+            id:cr
+            Screen:
+                name: "Page1"
+                FitImage:
+                    source:"Cot.jpeg"
+                    size_hint:1,1
+
+                MDCard:
+                    radius:[15]
+                    size_hint:.95,.95
+                    pos_hint:{"center_x":.5,"center_y":.5}
+                    opacity:.7
+
+                MDIconButton:
+                    icon:"plus"
+                    pos_hint:{"center_x":.1,"center_y":.95}
+                    on_release:Togle_Page2.set_state("toggle")
+
+                MDIconButton:
+                    icon:"arrow-left"
+                    pos_hint:{"center_x":.05,"center_y":.95}
+                    on_release:app.Back_petit_et_grand_Button(self)
+
+                MDLabel:
+                    text:"[b]Les mises[/b]"
+                    markup:True
+                    font_style:"H4"
+                    font_name:"Font"
+                    halign:"center"
+                    pos_hint:{"center_y":.8}
+
+                MDCard:
+                    pos_hint: {"center_x": .5, "center_y": .4}
+                    size_hint:.7,.6
+                    elevation:3
+                    MDScrollView:
+                        do_scroll_y: True
+                        do_scroll_x: False
+                        
+                        
+                        # Container pour centrer le grid
+                        BoxLayout:
+                            orientation: 'vertical'
+                            size_hint_y: None
+                            height: self.minimum_height
+                            
+                            # Widget spacer pour centrer verticalement si nécessaire 
+                            Widget:
+                                size_hint_y: None
+                                height: 20  # Ajustez selon vos besoins
+                            
+                            MDGridLayout:
+                                id: Les_Mises_Page5
+                                size_hint: None, None
+                                size: self.minimum_size
+                                cols: 5
+                                spacing: 10
+                                pos_hint: {"center_x": .5}
+                                
+                                # Pour centrer les enfants dans chaque cellule
+                                # Ajoutez cette propriété si vos widgets enfants ont besoin d'être centrés
+                                # halign: "center"  # Note: halign ne fonctionne que pour les Labels
+                            
+                            # Widget spacer pour équilibrer
+                            Widget:
+                                size_hint_y: None
+                                height: 0
+            Screen:
+                name:"Page2"
+
+                FitImage:
+                    source:"Cot.jpeg"
+                    size_hint:1,1
+
+                MDCard:
+                    radius:[15]
+                    size_hint:.95,.95
+                    pos_hint:{"center_x":.5,"center_y":.5}
+                    opacity:.7
+
+                MDIconButton:
+                    icon:"plus"
+                    pos_hint:{"center_x":.1,"center_y":.95}
+                    on_release:Togle_Page2.set_state("toggle")
+
+                MDIconButton:
+                    icon:"arrow-left"
+                    pos_hint:{"center_x":.05,"center_y":.95}
+                    on_release:app.Back_petit_et_grand_Button(self)
+
+                MDLabel:
+                    text:"[b]Les mises[/b]"
+                    markup:True
+                    font_style:"H4"
+                    font_name:"Font"
+                    halign:"center"
+                    pos_hint:{"center_y":.8}
+
+                MDCard:
+                    pos_hint: {"center_x": .5, "center_y": .4}
+                    size_hint:.7,.6
+                    elevation:3
+                    MDScrollView:
+                        do_scroll_y: True
+                        do_scroll_x: False
+                        
+                        
+                        # Container pour centrer le grid
+                        BoxLayout:
+                            orientation: 'vertical'
+                            size_hint_y: None
+                            height: self.minimum_height
+                            
+                            # Widget spacer pour centrer verticalement si nécessaire 
+                            Widget:
+                                size_hint_y: None
+                                height: 20  # Ajustez selon vos besoins
+                            
+                            MDGridLayout:
+                                id: Les_Names_Page5
+                                size_hint: None, None
+                                size: self.minimum_size
+                                cols: 5
+                                spacing: 10
+                                pos_hint: {"center_x": .5}
+                                
+                                # Pour centrer les enfants dans chaque cellule
+                                # Ajoutez cette propriété si vos widgets enfants ont besoin d'être centrés
+                                # halign: "center"  # Note: halign ne fonctionne que pour les Labels
+                            
+                            # Widget spacer pour équilibrer
+                            Widget:
+                                size_hint_y: None
+                                height: 0
+            Screen:
+                name:"Page3"
+                FitImage:
+                    source:"Cot.jpeg"
+                    size_hint:1,1
+
+                MDCard:
+                    radius:[15]
+                    size_hint:.95,.95
+                    pos_hint:{"center_x":.5,"center_y":.5}
+                    opacity:.7
+
+                MDIconButton:
+                    icon:"plus"
+                    pos_hint:{"center_x":.1,"center_y":.95}
+                    on_release:Togle_Page2.set_state("toggle")
+
+                MDIconButton:
+                    icon:"arrow-left"
+                    pos_hint:{"center_x":.05,"center_y":.95}
+                    on_release:app.Back_petit_et_grand_Button(self)
+                
+                MDCard:
+                    #elevation:3
+                    pos_hint:{"center_x":.5,"center_y":.5}
+                    size_hint_x:.6
+                    adaptive_height:True
+                    opacity:1
+                    MDBoxLayout:
+                        orientation: 'vertical'
+                        adaptive_height:True
+                        spacing:10
+                        padding:10
+                        MDTextField:
+                            id:Mise_Page5
+                            hint_text:"MISE UNITAIRE"
+                            mode:"fill"
+                            readonly:True
+                            halign:"center"
+                        MDTextField:
+                            id:Name_Page5
+                            hint_text:"NOM"
+                            readonly:True
+                            mode:"fill"
+                            halign:"center"
+                        MDTextField:
+                            id:Cotise_Page5
+                            hint_text:"Nombre de MISE (ex : 5)"
+                            input_filter:"int"
+                            mode:"fill"
+                            halign:"center"
+                        MDTextField:
+                            id:Total_Page5
+                            hint_text:"TOTAL"
+                            readonly:True
+                            mode:"fill"
+                            halign:"center"
+                        MDTextField:
+                            id:Payer_Page5
+                            hint_text:"Payer avec"
+                            input_filter:"int"
+                            mode:"fill"
+                            halign:"center"
+                        MDTextField:
+                            id:Remise_Page5
+                            hint_text:"Remise"
+                            readonly:True
+                            mode:"fill"
+                            halign:"center"
+                        
+                        MDRaisedButton:
+                            text:"[b]Envoyer[/b]"
+                            size_hint_x:.25
+                            pos_hint:{"center_x":.5}
+                            on_release:app.Cotisation_Page5(self,Name_Page5,Mise_Page5,Cotise_Page5,Total_Page5,Payer_Page5,Remise_Page5)
+
+    
+        # Navigation Drawer Panel
+        MDNavigationDrawer:
+            # Add Navigation Drawer Panel Content here.
+            id:Togle_Page2
+            size_hint_x:.3
+
+            MDBoxLayout:
+                orientation: 'vertical'
+                Image:
+                    source:"Icon.png"
+                    size:[.1,.1]
+                    pos_hint:{"center_x":.5}
+
+                MDLabel:
+                    text:"[b][color=ff0000]CAF,[/color] Pour les Fidèles de AD[/b]"
+                    markup:True
+                    font_name:"Font.ttf"
+                    height:self.texture_size[1]
+                    halign:"center"
+
+                MDScrollView:
+                    MDList:
+                        OneLineIconListItem:
+                            text:"[b]Night|Light[/b]"
+                            on_release:app.change_theme(self)
+                            IconLeftWidget:
+                                icon:"theme-light-dark"
+                        
+                        OneLineIconListItem:
+                            text:"[b]New Color[/b]"
+                            on_release:app.change_color(self)
+
+                            IconLeftWidget:
+                                icon:"palette"
+                        
+                        OneLineIconListItem:
+                            text:"[b]Menu[/b]"
+                            on_release:app.Menu_1(self)
+
+                            IconLeftWidget:
+                                icon:"menu"
+
+                        OneLineIconListItem:
+                            text:"[b]Leave[/b]"
+                            theme_text_color:"Error"
+                            on_release:app.Close(self)
+
+                            IconLeftWidget:
+                                icon:"close"

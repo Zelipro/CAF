@@ -1,0 +1,177 @@
+<Page2>:
+    name: "Page2"
+    MDNavigationLayout:
+        id:nav_layout
+        ScreenManager:
+            id:cr
+            Screen:
+                name:"Page1"
+                FitImage:
+                    source:"Lock.jpeg"
+                    size_hint:1,1
+                MDCard:
+                    radius:[15]
+                    pos_hint:{"center_x":.5,"center_y":.5}
+                    size_hint:.95,.95
+                    opacity:.7
+                
+                MDIconButton:
+                    icon:"plus"
+                    pos_hint:{"center_x":.05,"center_y":.95}
+                    on_release:Togle_Page2.set_state("toggle")
+                
+                MDLabel:
+                    text:"[b]Veuillez vous identifier ![/b]"
+                    markup:True
+                    font_style:"H3"
+                    font_name:"Font.ttf"
+                    pos_hint:{"center_y":.8}
+                    halign:"center"
+
+                MDTextField:
+                    id:Ident_page2
+                    mode:"rectangle"
+                    hint_text:"Votre identifiant"
+                    helper_text:"Identifiant"
+                    helper_text_mode:"on_focus"
+                    halign:"center"
+                    pos_hint:{"center_x":.5,"center_y":.6}
+                    size_hint_x:.5
+                
+                MDTextField:
+                    id:Pass_page2
+                    mode:"rectangle"
+                    hint_text:"Votre password"
+                    helper_text:"Password"
+                    helper_text_mode:"on_focus"
+                    halign:"center"
+                    pos_hint:{"center_x":.5,"center_y":.47}
+                    password:True
+                    size_hint_x:.5
+                
+                MDFlatButton:
+                    text:"[b]New Compte[/b]"
+                    pos_hint:{"center_x":.55,"center_y":.35}
+                    on_release:app.New_Compte(self)
+                
+                MDRaisedButton:
+                    text:"[b]Connecter[/b]"
+                    pos_hint:{"center_x":.4,"center_y":.35}
+                    on_release:app.Valider_Page2(self,Ident_page2,Pass_page2)
+                
+                MDLabel:
+                    text:"[b][color=ff0000]CAF,[/color] Pour les Fidèles de AD[/b]"
+                    markup:True
+                    font_style:"H3"
+                    font_name:"Font.ttf"
+                    pos_hint:{"center_y":.15}
+                    halign:"center"
+            Screen:
+                name:"Page2"
+                FitImage:
+                    source:"Lock.jpeg"
+                    size_hint:1,1
+                
+                MDCard:
+                    radius:[15]
+                    size_hint:.95,.95
+                    pos_hint:{"center_x":.5,"center_y":.5}
+                    opacity:.7
+                
+                MDIconButton:
+                    icon:"plus"
+                    pos_hint:{"center_x":.1,"center_y":.95}
+                    on_release:Togle_Page2.set_state("toggle")
+                
+                MDIconButton:
+                    icon:"arrow-left"
+                    pos_hint:{"center_x":.05,"center_y":.95}
+                    on_release:app.Back_petit_et_grand_Button(self)
+
+                MDLabel:
+                    text:"[b]Nouveau compte[/b]"
+                    markup:True
+                    font_style:"H3"
+                    font_name:"Font.ttf"
+                    pos_hint:{"center_y":.75}
+                    halign:'center'
+                
+                MDCard:
+                    #elevation:3
+                    pos_hint:{"center_x":.5,"center_y":.35}
+                    size_hint:.6,.5
+                    opacity:1
+                    MDBoxLayout:
+                        orientation: 'vertical'
+                        spacing:10
+                        MDTextField:
+                            id:Name2
+                            hint_text:"Votre nom"
+                            mode:"fill"
+                            halign:"center"
+                        MDTextField:
+                            id:Ident2
+                            hint_text:"Identifiant"
+                            mode:"fill"
+                            halign:"center"
+                        MDTextField:
+                            id:passs2
+                            hint_text:"Mot de passe"
+                            password:True
+                            mode:"fill"
+                            halign:"center"
+                        MDTextField:
+                            id:passs22
+                            hint_text:"Mot de passe"
+                            password:True
+                            mode:"fill"
+                            halign:"center"
+                        
+                        MDRaisedButton:
+                            text:"[b]Envoyer[/b]"
+                            size_hint_x:.25
+                            pos_hint:{"center_x":.5}
+                            on_release:app.Send_page_2(self,Ident2,passs2,passs22)
+
+        # Navigation Drawer Panel
+        MDNavigationDrawer:
+            # Add Navigation Drawer Panel Content here.
+            id:Togle_Page2
+            size_hint_x:.3
+
+            MDBoxLayout:
+                orientation: 'vertical'
+                Image:
+                    source:"Icon.png"
+                    size:[.1,.1]
+                    pos_hint:{"center_x":.5}
+
+                MDLabel:
+                    text:"[b][color=ff0000]CAF,[/color] Pour les Fidèles de AD[/b]"
+                    markup:True
+                    font_name:"Font.ttf"
+                    height:self.texture_size[1]
+                    halign:"center"
+
+                MDScrollView:
+                    MDList:
+                        OneLineIconListItem:
+                            text:"[b]Night|Light[/b]"
+                            on_release:app.change_theme(self)
+                            IconLeftWidget:
+                                icon:"theme-light-dark"
+                           
+                        OneLineIconListItem:
+                            text:"[b]New Color[/b]"
+                            on_release:app.change_color(self)
+
+                            IconLeftWidget:
+                                icon:"palette"
+                        OneLineIconListItem:
+                            text:"[b]Leave[/b]"
+                            theme_text_color:"Error"
+                            on_release:app.Close(self)
+
+                            IconLeftWidget:
+                                icon:"close"
+

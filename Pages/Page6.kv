@@ -1,0 +1,91 @@
+<Page6>:
+    name: "Page6"
+    MDNavigationLayout:
+        ScreenManager:
+            id:cr         
+            Screen:
+                name:"Page1"
+                FitImage:
+                    source:"Cot.jpeg"
+                    size_hint:1,1
+                
+                MDCard:
+                    radius:[15]
+                    size_hint:.95,.95
+                    pos_hint:{"center_x":.5,"center_y":.5}
+                    opacity:.7
+                
+                MDIconButton:
+                    icon:"plus"
+                    pos_hint:{"center_x":.1,"center_y":.95}
+                    on_release:Togle_Page2.set_state("toggle")
+                
+                MDIconButton:
+                    icon:"cog"
+                    pos_hint:{"center_x":.05,"center_y":.95}
+                    on_release:app.Menu_2(self)
+
+                MDFloatLayout:
+                    id:Data_Page6
+                    pos_hint:{"center_x":.5,"center_y":.5}
+
+
+        # Navigation Drawer Panel
+        MDNavigationDrawer:
+            # Add Navigation Drawer Panel Content here.
+            id:Togle_Page2
+            size_hint_x:.3
+
+            MDBoxLayout:
+                orientation: 'vertical'
+                Image:
+                    source:"Icon.png"
+                    size:[.1,.1]
+                    pos_hint:{"center_x":.5}
+
+                MDLabel:
+                    text:"[b][color=ff0000]CAF,[/color] Pour les Fidèles de AD[/b]"
+                    markup:True
+                    font_name:"Font.ttf"
+                    height:self.texture_size[1]
+                    halign:"center"
+
+                MDScrollView:
+                    MDList:
+                        OneLineIconListItem:
+                            text:"[b]Night|Light[/b]"
+                            on_release:app.change_theme(self)
+                            IconLeftWidget:
+                                icon:"theme-light-dark"
+                        
+                        OneLineIconListItem:
+                            text:"[b]New Color[/b]"
+                            on_release:app.change_color(self)
+
+                            IconLeftWidget:
+                                icon:"palette"
+                        
+                        OneLineIconListItem:
+                            text:"[b]Menu Generale[/b]"
+                            on_release:app.Menu_1(self)
+
+                            IconLeftWidget:
+                                icon:"menu"
+                        
+                        OneLineIconListItem:
+                            text:"[b]Option[/b]"
+                            on_release:app.Menu_2(self)
+
+                            IconLeftWidget:
+                                icon:"cog"
+
+                        OneLineIconListItem:
+                            text:"[b]Leave[/b]"
+                            theme_text_color:"Error"
+                            on_release:app.Close(self)
+
+                            IconLeftWidget:
+                                icon:"close"
+
+
+            

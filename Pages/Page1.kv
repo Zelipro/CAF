@@ -1,0 +1,34 @@
+<Page1>:
+    name: "Page1"
+    FitImage:
+        source:"Cot.jpeg"
+        size_hint:1,1
+
+    MDCard:
+        radius:[15]
+        pos_hint:{"center_x":.5,"center_y":.5}
+        size_hint:.95,.95
+        opacity: 0.45
+        
+    Image:
+        source:"Icon.png"
+        size_hint:[0.2,0.2]
+        pos_hint:{"center_x":.5,"center_y":.8}
+    
+    MDLabel:
+        text: "[b]Bienvenue dans [color=ff0000]CAF[/color][/b]"
+        markup:True
+        pos_hint:{"center_y":.6}
+        font_style:"H4"
+        font_name:"Font.ttf"
+        halign:"center"
+
+    MDRaisedButton:
+        id:But_Page1
+        text:"[b]Commancer[/b]"
+        pos_hint:{"center_x":.5,"center_y":.4}
+        on_release:app.Commancer(self)
+        
+
+
+            
