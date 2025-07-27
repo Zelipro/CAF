@@ -11,11 +11,55 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.x'
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-      - name: Build
-        run: pyinstaller --onefile --hidden-import=kivymd --collect-all kivymd main.py
+          python-version: '3.10'
+      - name: Install system dependencies (Ubuntu)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgl1-mesa-glx libegl1-mesa libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2 libxi6 libxtst6
+      - name: Install Python dependencies
+        run: |
+          pip install --upgrade pip
+          pip install wheel setuptools
+          pip install kivy[base] kivymd pillow
+          pip install pyinstaller
+      - name: Create PyInstaller hook for KivyMD
+        shell: bash
+        run: |
+          mkdir -p hooks
+          cat > hooks/hook-kivymd.py << 'EOF'
+          from PyInstaller.utils.hooks import collect_all, collect_data_files
+          
+          datas, binaries, hiddenimports = collect_all('kivymd')
+          
+          # Add specific KivyMD data files
+          datas += collect_data_files('kivymd')
+          
+          # Add hidden imports
+          hiddenimports += [
+              'kivymd.app',
+              'kivymd.uix',
+              'kivymd.uix.behaviors',
+              'kivymd.uix.button',
+              'kivymd.uix.label',
+              'kivymd.uix.screen',
+              'kivymd.uix.toolbar',
+              'kivymd.theming',
+              'kivymd.material_resources',
+          ]
+          EOF
+      - name: Build with PyInstaller
+        run: |
+          pyinstaller \
+            --onefile \
+            --noconsole \
+            --additional-hooks-dir=hooks \
+            --collect-all kivymd \
+            --collect-all kivy \
+            --hidden-import=kivymd \
+            --hidden-import=kivymd.app \
+            --name=MyKivyMDApp \
+            votre_script.py
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
