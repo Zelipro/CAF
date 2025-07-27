@@ -1,7 +1,3 @@
-# Bibliothèques principales
-kivy==2.2.0
-kivymd==1.1.1
-
-# Autres dépendances (optionnelles si utilisées)
-pillow==10.0.0  # Pour la gestion d'images dans Kivy
-pygments==2.15.1 # Souvent requis par KivyMD
+kivymd
+kivy
+pyinstaller
