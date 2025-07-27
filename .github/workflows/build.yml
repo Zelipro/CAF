@@ -15,7 +15,7 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Build
-        run: pyinstaller --onefile --hidden-import=kivymd --collect-all kivymd votre_script.py
+        run: pyinstaller --onefile --hidden-import=kivymd --collect-all kivymd main.py
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
