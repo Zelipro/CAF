@@ -13,58 +13,9 @@ jobs:
         with:
           python-version: '3.x'
       - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
-          pip install pillow
-      - name: Create PyInstaller spec file
-        run: |
-          cat > build.spec << 'EOF'
-          # -*- mode: python ; coding: utf-8 -*-
-          from kivy_deps import sdl2, glew
-          from kivymd import hooks_path as kivymd_hooks_path
-          
-          a = Analysis(
-              ['votre_script.py'],
-              pathex=[],
-              binaries=[],
-              datas=[],
-              hiddenimports=['kivymd', 'kivymd.app', 'kivymd.uix', 'kivymd.uix.behaviors', 'kivymd.uix.button', 'kivymd.uix.label'],
-              hookspath=[kivymd_hooks_path],
-              hooksconfig={},
-              runtime_hooks=[],
-              excludes=[],
-              win_no_prefer_redirects=False,
-              win_private_assemblies=False,
-              cipher=None,
-              noarchive=False,
-          )
-          
-          pyz = PYZ(a.pure, a.zipped_data, cipher=None)
-          
-          exe = EXE(
-              pyz,
-              a.scripts,
-              a.binaries,
-              a.zipfiles,
-              a.datas,
-              [],
-              name='votre_script',
-              debug=False,
-              bootloader_ignore_signals=False,
-              strip=False,
-              upx=True,
-              upx_exclude=[],
-              runtime_tmpdir=None,
-              console=True,
-              disable_windowed_traceback=False,
-              argv_emulation=False,
-              target_arch=None,
-              codesign_identity=None,
-              entitlements_file=None,
-          )
-          EOF
+        run: pip install -r requirements.txt
       - name: Build
-        run: pyinstaller build.spec
+        run: pyinstaller --onefile --hidden-import=kivymd --collect-all kivymd votre_script.py
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
