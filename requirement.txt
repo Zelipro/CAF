@@ -1,0 +1,10 @@
+# Bibliothèques principales
+kivy==2.2.0
+kivymd==1.1.1
+
+# Gestion de base de données
+sqlite3         # (Inclus dans Python, pas besoin de l'installer)
+
+# Autres dépendances (optionnelles si utilisées)
+pillow==10.0.0  # Pour la gestion d'images dans Kivy
+pygments==2.15.1 # Souvent requis par KivyMD
