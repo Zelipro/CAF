@@ -1,3 +1,4 @@
-kivymd
-kivy
-pyinstaller
+kivy>=2.1.0
+kivymd>=1.1.1
+pillow
+pyinstaller>=5.0
