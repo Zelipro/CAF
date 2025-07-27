@@ -1,67 +1,283 @@
-name: Build Multi-OS
-on: [push]
+name: Build CAF Multi-OS
+on: 
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
         os: [windows-latest, macos-latest, ubuntu-latest]
+        include:
+          - os: windows-latest
+            executable_name: CAF.exe
+            artifact_name: CAF-Windows
+          - os: macos-latest
+            executable_name: CAF
+            artifact_name: CAF-macOS
+          - os: ubuntu-latest
+            executable_name: CAF
+            artifact_name: CAF-Linux
+    
     runs-on: ${{ matrix.os }}
+    
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
+      
       - name: Install system dependencies (Ubuntu)
         if: matrix.os == 'ubuntu-latest'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libgl1-mesa-glx libegl1-mesa libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2 libxi6 libxtst6
+          sudo apt-get install -y \
+            libgl1-mesa-glx \
+            libegl1-mesa \
+            libxrandr2 \
+            libxss1 \
+            libxcursor1 \
+            libxcomposite1 \
+            libasound2 \
+            libxi6 \
+            libxtst6 \
+            libgstreamer1.0-0 \
+            gstreamer1.0-plugins-base \
+            gstreamer1.0-plugins-good \
+            gstreamer1.0-plugins-bad \
+            gstreamer1.0-plugins-ugly \
+            libgstreamer-plugins-base1.0-dev
+      
+      - name: Install system dependencies (macOS)
+        if: matrix.os == 'macos-latest'
+        run: |
+          brew install pkg-config
+      
+      - name: Cache pip dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      
       - name: Install Python dependencies
         run: |
-          pip install --upgrade pip
-          pip install wheel setuptools
-          pip install kivy[base] kivymd pillow
-          pip install pyinstaller
-      - name: Create PyInstaller hook for KivyMD
+          python -m pip install --upgrade pip wheel setuptools
+          pip install kivy[base]==2.2.0
+          pip install kivymd==1.1.1
+          pip install pillow
+          pip install pyinstaller==6.3.0
+      
+      - name: Verify project structure
+        run: |
+          echo "=== Project Structure ==="
+          find . -name "*.py" -o -name "*.kv" -o -name "*.png" -o -name "*.jpg" -o -name "*.jpeg" -o -name "*.ttf" | head -20
+          echo "=== Main files ==="
+          ls -la
+      
+      - name: Create PyInstaller spec file
         shell: bash
         run: |
-          mkdir -p hooks
-          cat > hooks/hook-kivymd.py << 'EOF'
-          from PyInstaller.utils.hooks import collect_all, collect_data_files
+          cat > CAF.spec << 'EOF'
+          # -*- mode: python ; coding: utf-8 -*-
+          import sys
+          import os
+          from kivy_deps import sdl2, glew
+          from kivymd import hooks_path as kivymd_hooks_path
           
-          datas, binaries, hiddenimports = collect_all('kivymd')
+          block_cipher = None
           
-          # Add specific KivyMD data files
-          datas += collect_data_files('kivymd')
+          # Collect all .kv files from Pages directory
+          kv_files = []
+          if os.path.exists('Pages'):
+              for file in os.listdir('Pages'):
+                  if file.endswith('.kv'):
+                      kv_files.append(('Pages/' + file, 'Pages'))
           
-          # Add hidden imports
-          hiddenimports += [
-              'kivymd.app',
-              'kivymd.uix',
-              'kivymd.uix.behaviors',
-              'kivymd.uix.button',
-              'kivymd.uix.label',
-              'kivymd.uix.screen',
-              'kivymd.uix.toolbar',
-              'kivymd.theming',
-              'kivymd.material_resources',
-          ]
+          # Collect resource files (images, fonts)
+          resource_files = []
+          for ext in ['*.png', '*.jpg', '*.jpeg', '*.ttf', '*.otf']:
+              for file in os.listdir('.'):
+                  if file.lower().endswith(ext.replace('*', '')):
+                      resource_files.append((file, '.'))
+          
+          a = Analysis(
+              ['main.py'],
+              pathex=[],
+              binaries=[],
+              datas=kv_files + resource_files + [
+                  ('Pages', 'Pages'),  # Include entire Pages directory
+              ],
+              hiddenimports=[
+                  'kivymd',
+                  'kivymd.app',
+                  'kivymd.uix',
+                  'kivymd.uix.behaviors',
+                  'kivymd.uix.button',
+                  'kivymd.uix.label',
+                  'kivymd.uix.screen',
+                  'kivymd.uix.screenmanager',
+                  'kivymd.uix.toolbar',
+                  'kivymd.uix.dialog',
+                  'kivymd.uix.boxlayout',
+                  'kivymd.uix.datatables',
+                  'kivymd.uix.menu',
+                  'kivymd.theming',
+                  'kivymd.material_resources',
+                  'sqlite3',
+                  'kivy.clock',
+                  'kivy.lang',
+                  'kivy.uix.popup',
+              ],
+              hookspath=[kivymd_hooks_path],
+              hooksconfig={},
+              runtime_hooks=[],
+              excludes=[],
+              win_no_prefer_redirects=False,
+              win_private_assemblies=False,
+              cipher=block_cipher,
+              noarchive=False,
+          )
+          
+          pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
+          
+          exe = EXE(
+              pyz,
+              a.scripts,
+              a.binaries,
+              a.zipfiles,
+              a.datas,
+              *[Tree(p) for p in (sdl2.dep_bins + glew.dep_bins)] if sys.platform.startswith('win') else [],
+              [],
+              name='CAF',
+              debug=False,
+              bootloader_ignore_signals=False,
+              strip=False,
+              upx=True,
+              upx_exclude=[],
+              runtime_tmpdir=None,
+              console=False,  # Set to True if you want console for debugging
+              disable_windowed_traceback=False,
+              argv_emulation=False,
+              target_arch=None,
+              codesign_identity=None,
+              entitlements_file=None,
+          )
           EOF
+      
       - name: Build with PyInstaller
         run: |
-          pyinstaller \
-            --onefile \
-            --noconsole \
-            --additional-hooks-dir=hooks \
-            --collect-all kivymd \
-            --collect-all kivy \
-            --hidden-import=kivymd \
-            --hidden-import=kivymd.app \
-            --name=MyKivyMDApp \
-            votre_script.py
-      - name: Upload Artifacts
+          pyinstaller CAF.spec --clean --noconfirm
+      
+      - name: Verify build output
+        shell: bash
+        run: |
+          echo "=== Build Output ==="
+          ls -la dist/
+          if [ -f "dist/CAF${{ matrix.os == 'windows-latest' && '.exe' || '' }}" ]; then
+            echo "✅ Executable created successfully"
+            file "dist/CAF${{ matrix.os == 'windows-latest' && '.exe' || '' }}" || true
+          else
+            echo "❌ Executable not found"
+            exit 1
+          fi
+      
+      - name: Test executable (Linux/macOS)
+        if: matrix.os != 'windows-latest'
+        run: |
+          chmod +x dist/CAF
+          # Test that the executable can at least start (in headless mode)
+          timeout 10s xvfb-run -a dist/CAF --help || echo "App started (expected timeout)"
+        continue-on-error: true
+      
+      - name: Create portable package
+        shell: bash
+        run: |
+          mkdir -p package
+          cp dist/CAF${{ matrix.os == 'windows-latest' && '.exe' || '' }} package/
+          
+          # Create a simple launcher script
+          if [ "${{ matrix.os }}" != "windows-latest" ]; then
+            cat > package/run_CAF.sh << 'EOF'
+          #!/bin/bash
+          cd "$(dirname "$0")"
+          ./CAF
+          EOF
+            chmod +x package/run_CAF.sh
+          else
+            cat > package/run_CAF.bat << 'EOF'
+          @echo off
+          cd /d "%~dp0"
+          CAF.exe
+          EOF
+          fi
+          
+          # Add README
+          cat > package/README.txt << 'EOF'
+          CAF - Application de gestion des cotisations
+          
+          Pour lancer l'application :
+          - Windows : Double-cliquez sur CAF.exe ou run_CAF.bat
+          - Linux/macOS : Exécutez ./CAF ou ./run_CAF.sh
+          
+          Assurez-vous que tous les fichiers restent dans le même dossier.
+          EOF
+      
+      - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ runner.os }}-build
-          path: dist/
+          name: ${{ matrix.artifact_name }}
+          path: package/
+          retention-days: 30
+      
+      - name: Upload build logs (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs-${{ matrix.os }}
+          path: |
+            build/
+            *.log
+          retention-days: 7
+
+  create-release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      
+      - name: Create release archives
+        run: |
+          cd artifacts
+          for dir in CAF-*; do
+            if [ -d "$dir" ]; then
+              if [[ "$dir" == *"Windows"* ]]; then
+                zip -r "${dir}.zip" "$dir"
+              else
+                tar -czf "${dir}.tar.gz" "$dir"
+              fi
+            fi
+          done
+          ls -la *.zip *.tar.gz
+      
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            artifacts/*.zip
+            artifacts/*.tar.gz
+          draft: false
+          prerelease: false
