@@ -15,7 +15,7 @@ jobs:
       - name: Install PyInstaller
         run: pip install pyinstaller
       - name: Build
-        run: pyinstaller --onefile votre_script.py
+        run: pyinstaller --onefile main.py
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
